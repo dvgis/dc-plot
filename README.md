@@ -34,7 +34,7 @@ Tips：This SDK is JS+GIS framework package. Developers need to have some front-
 ```js
 import 'dvgis/dc-sdk/dist/dc.base.min' //Basic Package
 import 'dvgis/dc-sdk/dist/dc.core.min' //Core Package
-import 'dvgis/dc-sdk/dist/plot/dc.plot.min' //Plot Package
+import 'dvgis/dc-plot/dist/dc.plot.min' //Plot Package
 import 'dvgis/dc-sdk/dist/dc.core.min.css' // Main Style Sheet
 ```
 
@@ -51,17 +51,17 @@ const dvgis = './node_modules/@dvgis'
 
 module.exports = {
   // other settings
-  chainWebpack: (config) => {
+  chainWebpack: config => {
     config.resolve.alias.set('dvgis', path.resolve(__dirname, dvgisDist))
     config.plugin('copy').use(CopywebpackPlugin, [
       [
         {
           from: path.join(dvgisDist, 'dc-sdk/dist/resources'),
-          to: 'libs/dc-sdk/resources',
-        },
-      ],
+          to: 'libs/dc-sdk/resources'
+        }
+      ]
     ])
-  },
+  }
 }
 ```
 

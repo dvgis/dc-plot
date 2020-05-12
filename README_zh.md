@@ -34,7 +34,7 @@ Tips：本框架是 JS+GIS 的框架包。开发者需要有一定的前端技�
 ```js
 import 'dvgis/dc-sdk/dist/dc.base.min' //基础包
 import 'dvgis/dc-sdk/dist/dc.core.min' //核心包
-import 'dvgis/dc-sdk/dist/plot/dc.plot.min' //核心包
+import 'dvgis/dc-plot/dist/dc.plot.min' //核心包
 import 'dvgis/dc-sdk/dist/dc.core.min.css' // 主要样式
 ```
 
@@ -51,17 +51,17 @@ const dvgis = './node_modules/@dvgis'
 
 module.exports = {
   // 其他配置
-  chainWebpack: (config) => {
+  chainWebpack: config => {
     config.resolve.alias.set('dvgis', path.resolve(__dirname, dvgisDist))
     config.plugin('copy').use(CopywebpackPlugin, [
       [
         {
           from: path.join(dvgisDist, 'dc-sdk/dist/resources'),
-          to: 'libs/dc-sdk/resources',
-        },
-      ],
+          to: 'libs/dc-sdk/resources'
+        }
+      ]
     ])
-  },
+  }
 }
 ```
 
