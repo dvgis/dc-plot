@@ -27,8 +27,8 @@ Tips：This SDK is JS+GIS framework package. Developers need to have some front-
 > NPM / YARN
 
 ```shell
-   yarn add @dvgis/dc-sdk
-   npm install @dvgis/dc-sdk
+   yarn add @dvgis/dc-sdk @dvgis/dc-plot
+   npm install @dvgis/dc-sdk @dvgis/dc-plot
 ```
 
 ```js

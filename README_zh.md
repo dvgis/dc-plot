@@ -27,8 +27,8 @@ Tips：本框架是 JS+GIS 的框架包。开发者需要有一定的前端技�
 > NPM / YARN
 
 ```shell
-   yarn add @dvgis/dc-sdk
-   npm install @dvgis/dc-sdk
+   yarn add @dvgis/dc-sdk @dvgis/dc-plot
+   npm install @dvgis/dc-sdk @dvgis/dc-plot
 ```
 
 ```js

@@ -2,7 +2,7 @@
  * @Author: Caven
  * @Date: 2020-01-18 18:22:23
  * @Last Modified by: Caven
- * @Last Modified time: 2020-05-12 19:52:46
+ * @Last Modified time: 2020-05-12 20:10:37
  */
 
 const path = require('path')
@@ -34,7 +34,7 @@ module.exports = (env) => {
     devtool: IS_PROD ? false : 'cheap-module-eval-source-map',
     output: {
       filename: IS_PROD ? '[name].min.js' : '[name].js',
-      path: path.resolve(__dirname, 'dist/plot'),
+      path: path.resolve(__dirname, 'dist'),
       publicPath: publicPath,
       sourcePrefix: '',
     },
