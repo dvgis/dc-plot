@@ -2,7 +2,7 @@
  * @Author: Caven
  * @Date: 2020-01-31 15:51:32
  * @Last Modified by: Caven
- * @Last Modified time: 2020-05-12 14:28:29
+ * @Last Modified time: 2020-06-11 16:10:48
  */
 
 import DrawPoint from './draw/DrawPoint'
@@ -55,7 +55,7 @@ class Plot {
     let info = {
       viewer: this._viewer,
       plotEvent: this._plotEvent,
-      layer: this._drawLayer,
+      layer: this._drawLayer
     }
     switch (type) {
       case OverlayType.POINT:
@@ -83,7 +83,7 @@ class Plot {
       viewer: this._viewer,
       plotEvent: this._plotEvent,
       layer: this._markerLayer,
-      overlay: overlay,
+      overlay: overlay
     }
     switch (overlay.type) {
       case OverlayType.POINT:

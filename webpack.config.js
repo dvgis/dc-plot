@@ -2,7 +2,7 @@
  * @Author: Caven
  * @Date: 2020-01-18 18:22:23
  * @Last Modified by: Caven
- * @Last Modified time: 2020-05-12 20:10:37
+ * @Last Modified time: 2020-06-15 09:39:18
  */
 
 const path = require('path')
@@ -14,14 +14,14 @@ function resolve(dir) {
   return path.join(__dirname, '.', dir)
 }
 
-module.exports = (env) => {
+module.exports = env => {
   const IS_PROD = (env && env.production) || false
   const publicPath = IS_PROD ? '/' : '/'
   let plugins = [
     new MiniCssExtractPlugin({
       filename: IS_PROD ? '[name].min.css' : '[name].css',
-      allChunks: true,
-    }),
+      allChunks: true
+    })
   ]
   if (IS_PROD) {
     plugins.push(new OptimizeCssAssetsPlugin())
@@ -29,20 +29,20 @@ module.exports = (env) => {
   }
   return {
     entry: {
-      'dc.plot': ['entry'],
+      'dc.plot': ['entry']
     },
     devtool: IS_PROD ? false : 'cheap-module-eval-source-map',
     output: {
       filename: IS_PROD ? '[name].min.js' : '[name].js',
       path: path.resolve(__dirname, 'dist'),
       publicPath: publicPath,
-      sourcePrefix: '',
+      sourcePrefix: ''
     },
     amd: {
-      toUrlUndefinded: true,
+      toUrlUndefined: true
     },
     node: {
-      fs: 'empty',
+      fs: 'empty'
     },
     module: {
       unknownContextCritical: false,
@@ -54,49 +54,49 @@ module.exports = (env) => {
           query: {
             presets: ['@babel/preset-env'],
             compact: false,
-            ignore: ['checkTree'],
-          },
+            ignore: ['checkTree']
+          }
         },
         {
           test: /\.css$/,
           use: [
             MiniCssExtractPlugin.loader,
             {
-              loader: 'css-loader',
+              loader: 'css-loader'
             },
             {
-              loader: 'sass-loader',
-            },
-          ],
+              loader: 'sass-loader'
+            }
+          ]
         },
         {
           test: /\.scss$/,
           use: [
             MiniCssExtractPlugin.loader,
             {
-              loader: 'css-loader',
+              loader: 'css-loader'
             },
             {
-              loader: 'sass-loader',
-            },
-          ],
+              loader: 'sass-loader'
+            }
+          ]
         },
         {
           test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
           loader: 'url-loader',
           options: {
-            limit: 20000,
-          },
-        },
-      ],
+            limit: 20000
+          }
+        }
+      ]
     },
     resolve: {
       extensions: ['.js', '.json', '.css'],
       alias: {
         '@': resolve('src'),
-        entry: './src/index.js',
-      },
+        entry: './src/index.js'
+      }
     },
-    plugins,
+    plugins
   }
 }
