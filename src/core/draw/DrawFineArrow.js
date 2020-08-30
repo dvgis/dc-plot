@@ -4,7 +4,6 @@
  */
 
 import Draw from './Draw'
-
 import FineArrowGraphics from '../graphics/FineArrowGraphics'
 
 const { Transform } = DC
@@ -50,15 +49,15 @@ class DrawFineArrow extends Draw {
     let len = this._positions.length
     if (len === 0) {
       this._positions.push(e.surfacePosition)
-      this._createAnchor(e.surfacePosition)
+      this.createAnchor(e.surfacePosition)
       this._floatingAnchor = this._createAnchor(e.surfacePosition)
     }
     this._positions.push(e.surfacePosition)
     this._graphics.positions = this._positions
-    this._createAnchor(e.surfacePosition)
+    this.createAnchor(e.surfacePosition)
     if (len > 1) {
       this._positions.pop()
-      this._unbindEvent()
+      this.unbindEvent()
       let fineArrow = new DC.FineArrow(
         Transform.transformCartesianArrayToWGS84Array(this._positions)
       )

@@ -39,7 +39,7 @@ class DrawPoint extends Draw {
 
   _mouseClickHandler(e) {
     this._position = e.surfacePosition
-    this._unbindEvent()
+    this.unbindEvent()
     let billboard = new DC.Billboard(
       Transform.transformCartesianToWGS84(this._position),
       this._style.image

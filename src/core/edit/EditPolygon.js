@@ -1,6 +1,6 @@
 /**
  * @Author: Caven
- * @Date: 2020-08-30 22:39:34
+ * @Date: 2020-08-30 23:12:09
  */
 
 import Edit from './Edit'
@@ -9,7 +9,7 @@ const { Transform } = DC
 
 const { Cesium } = DC.Namespace
 
-class EditPolyline extends Edit {
+class EditPolygon extends Edit {
   constructor(plot, overlay) {
     super(plot)
     this._overlay = overlay
@@ -22,9 +22,10 @@ class EditPolyline extends Edit {
     this._delegate = new Cesium.Entity()
     this._delegate.merge(this._overlay.delegate)
     this._overlay.show = false
-    this._delegate.polyline.positions = new Cesium.CallbackProperty(time => {
-      if (this._positions > 1) {
-        return this._positions
+    this._delegate.polygon.hierarchy = new Cesium.CallbackProperty(time => {
+      if (this._positions.length > 2) {
+        let pHierarchy = new Cesium.PolygonHierarchy(this._positions)
+        return pHierarchy
       } else {
         return null
       }
@@ -34,10 +35,10 @@ class EditPolyline extends Edit {
 
   _mountAnchor() {
     let positions = [].concat(
-      this._overlay.delegate.polyline.positions.getValue(
-        Cesium.JulianDate.now()
-      )
+      this._overlay.delegate.polygon.hierarchy.getValue(Cesium.JulianDate.now())
+        .positions
     )
+    positions.push(positions[0])
     for (let i = 0; i < positions.length - 1; i++) {
       let mid = this.computeMidPosition(positions[i], positions[i + 1])
       this._positions.push(positions[i])
@@ -57,17 +58,30 @@ class EditPolyline extends Edit {
         let properties = this._pickedAnchor.properties.getValue(
           Cesium.JulianDate.now()
         )
+        let currentIndex = properties.index
         if (properties.isMid) {
-          let preMidPosition = this.computeMidPosition(
-            this._positions[properties.index],
-            this._positions[properties.index - 1]
-          )
-          let nextMidPosition = this.computeMidPosition(
-            this._positions[properties.index],
-            this._positions[properties.index + 1]
-          )
-          this._plot.anchorLayer.removeAll()
-          this._anchors = []
+          let preMidPosition
+          let nextMidPosition
+          let len = this._positions.length
+          if (currentIndex === len - 1) {
+            preMidPosition = this.computeMidPosition(
+              this._positions[currentIndex],
+              this._positions[currentIndex - 1]
+            )
+            nextMidPosition = this.computeMidPosition(
+              this._positions[currentIndex],
+              this._positions[0]
+            )
+          } else {
+            preMidPosition = this.computeMidPosition(
+              this._positions[currentIndex],
+              this._positions[currentIndex - 1]
+            )
+            nextMidPosition = this.computeMidPosition(
+              this._positions[currentIndex],
+              this._positions[currentIndex + 1]
+            )
+          }
           this._positions.splice(
             properties.index,
             1,
@@ -75,6 +89,8 @@ class EditPolyline extends Edit {
             e.surfacePosition,
             nextMidPosition
           )
+          this._plot.anchorLayer.removeAll()
+          this._anchors = []
           this._positions.forEach((item, index) => {
             this.createAnchor(item, index, index % 2 !== 0)
           })
@@ -101,45 +117,43 @@ class EditPolyline extends Edit {
       let properties = this._pickedAnchor.properties.getValue(
         Cesium.JulianDate.now()
       )
+      let currentIndex = properties.index
       this._pickedAnchor.position.setValue(e.surfacePosition)
-      this._positions[properties.index] = e.surfacePosition
+      this._positions[currentIndex] = e.surfacePosition
+      let len = this._positions.length
       if (!properties.isMid) {
-        let currentIndex = properties.index
         let preAnchorIndex = -1
         let preMidAnchorIndex = -1
         let nextAnchorIndex = -1
         let nextMidAnchorIndex = -1
-        let len = this._positions.length
         if (currentIndex === 0) {
+          preAnchorIndex = len - 2
+          preMidAnchorIndex = len - 1
           nextAnchorIndex = currentIndex + 2
           nextMidAnchorIndex = currentIndex + 1
-        } else if (properties.index === len - 1) {
+        } else if (currentIndex === len - 2) {
           preAnchorIndex = currentIndex - 2
           preMidAnchorIndex = currentIndex - 1
+          nextAnchorIndex = 0
+          nextMidAnchorIndex = len - 1
         } else {
           preAnchorIndex = currentIndex - 2
           preMidAnchorIndex = currentIndex - 1
           nextAnchorIndex = currentIndex + 2
           nextMidAnchorIndex = currentIndex + 1
         }
-
-        if (preAnchorIndex > 0) {
-          let preMidPosition = this.computeMidPosition(
-            this._positions[preAnchorIndex],
-            this._positions[currentIndex]
-          )
-          this._positions[preMidAnchorIndex] = preMidPosition
-          this._anchors[preMidAnchorIndex].position.setValue(preMidPosition)
-        }
-
-        if (nextAnchorIndex > 0) {
-          let nextMidPosition = this.computeMidPosition(
-            this._positions[nextAnchorIndex],
-            this._positions[currentIndex]
-          )
-          this._positions[nextMidAnchorIndex] = nextMidPosition
-          this._anchors[nextMidAnchorIndex].position.setValue(nextMidPosition)
-        }
+        let preMidPosition = this.computeMidPosition(
+          this._positions[preAnchorIndex],
+          this._positions[currentIndex]
+        )
+        let nextMidPosition = this.computeMidPosition(
+          this._positions[nextAnchorIndex],
+          this._positions[currentIndex]
+        )
+        this._positions[preMidAnchorIndex] = preMidPosition
+        this._positions[nextMidAnchorIndex] = nextMidPosition
+        this._anchors[preMidAnchorIndex].position.setValue(preMidPosition)
+        this._anchors[nextMidAnchorIndex].position.setValue(nextMidPosition)
       }
     }
   }
@@ -154,4 +168,4 @@ class EditPolyline extends Edit {
   }
 }
 
-export default EditPolyline
+export default EditPolygon

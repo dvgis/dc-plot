@@ -20,7 +20,47 @@ class Draw {
 
   _mouseRightClickHandler() {}
 
-  _createAnchor(position, isCenter = false) {
+  bindEvent() {
+    this._plot.viewer.on(
+      Cesium.ScreenSpaceEventType.LEFT_CLICK,
+      this._mouseClickHandler,
+      this
+    )
+
+    this._plot.viewer.on(
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE,
+      this._mouseMoveHandler,
+      this
+    )
+
+    this._plot.viewer.on(
+      Cesium.ScreenSpaceEventType.RIGHT_CLICK,
+      this._mouseRightClickHandler,
+      this
+    )
+  }
+
+  unbindEvent() {
+    this._plot.viewer.off(
+      Cesium.ScreenSpaceEventType.LEFT_CLICK,
+      this._mouseClickHandler,
+      this
+    )
+
+    this._plot.viewer.off(
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE,
+      this._mouseMoveHandler,
+      this
+    )
+
+    this._plot.viewer.off(
+      Cesium.ScreenSpaceEventType.RIGHT_CLICK,
+      this._mouseRightClickHandler,
+      this
+    )
+  }
+
+  createAnchor(position, isCenter = false) {
     return this._plot.overlayLayer.add({
       position: position,
       billboard: {
@@ -35,48 +75,8 @@ class Draw {
     })
   }
 
-  _bindEvent() {
-    this._plot.viewer.on(
-      Cesium.ScreenSpaceEventType.LEFT_CLICK,
-      this._mouseClickHandler,
-      this
-    )
-
-    this._plot.viewer.on(
-      Cesium.ScreenSpaceEventType.MOUSE_MOVE,
-      this._mouseMoveHandler,
-      this
-    )
-
-    this._plot.viewer.on(
-      Cesium.ScreenSpaceEventType.RIGHT_CLICK,
-      this._mouseRightClickHandler,
-      this
-    )
-  }
-
-  _unbindEvent() {
-    this._plot.viewer.off(
-      Cesium.ScreenSpaceEventType.LEFT_CLICK,
-      this._mouseClickHandler,
-      this
-    )
-
-    this._plot.viewer.off(
-      Cesium.ScreenSpaceEventType.MOUSE_MOVE,
-      this._mouseMoveHandler,
-      this
-    )
-
-    this._plot.viewer.off(
-      Cesium.ScreenSpaceEventType.RIGHT_CLICK,
-      this._mouseRightClickHandler,
-      this
-    )
-  }
-
   start() {
-    this._bindEvent()
+    this.bindEvent()
   }
 }
 

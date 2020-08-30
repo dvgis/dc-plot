@@ -45,11 +45,11 @@ class DrawPolygon extends Draw {
     let len = this._positions.length
     if (len === 0) {
       this._positions.push(e.surfacePosition)
-      this._createAnchor(e.surfacePosition)
+      this.createAnchor(e.surfacePosition)
       this._floatingAnchor = this._createAnchor(e.surfacePosition)
     }
     this._positions.push(e.surfacePosition)
-    this._createAnchor(e.surfacePosition)
+    this.createAnchor(e.surfacePosition)
   }
 
   _mouseMoveHandler(e) {
@@ -62,7 +62,7 @@ class DrawPolygon extends Draw {
   }
 
   _mouseRightClickHandler(e) {
-    this._unbindEvent()
+    this.unbindEvent()
     let polygon = new DC.Polygon(
       Transform.transformCartesianArrayToWGS84Array(this._positions)
     )

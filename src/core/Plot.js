@@ -14,9 +14,17 @@ import DrawDoubleArrow from './draw/DrawDoubleArrow'
 import DrawFineArrow from './draw/DrawFineArrow'
 import DrawGatheringPlace from './draw/DrawGatheringPlace'
 import DrawTailedAttackArrow from './draw/DrawTailedAttackArrow'
-
 import EditPoint from './edit/EditPoint'
 import EditPolyline from './edit/EditPolyline'
+import EditPolygon from './edit/EditPolygon'
+import EditCircle from './edit/EditCircle'
+import EditRectangle from './edit/EditRectangle'
+import EditBillboard from './edit/EditBillboard'
+import EditAttackArrow from './edit/EditAttackArrow'
+import EditDoubleArrow from './edit/EditDoubleArrow'
+import EditFineArrow from './edit/EditFineArrow'
+import EditGatheringPlace from './edit/EditGatheringPlace'
+import EditTailedAttackArrow from './edit/EditTailedAttackArrow'
 
 const IMG_CIRCLE_RED = require('./images/circle_red.png')
 
@@ -129,27 +137,39 @@ class Plot {
   }
 
   _createEditWorker(overlay) {
-    let info = {
-      viewer: this._viewer,
-      plotEvent: this._plotEvent,
-      layer: this._markerLayer,
-      overlay: overlay
-    }
     switch (overlay.type) {
       case OverlayType.POINT:
-        this._editWorker = new EditPoint(info)
+        this._editWorker = new EditPoint(this, overlay)
         break
       case OverlayType.POLYLINE:
-        this._editWorker = new EditPolyline(info)
+        this._editWorker = new EditPolyline(this, overlay)
         break
       case OverlayType.POLYGON:
-        this._drawWorker = new DrawPolygon(info)
+        this._editWorker = new EditPolygon(this, overlay)
         break
       case OverlayType.CIRCLE:
-        this._drawWorker = new DrawCircle(info)
+        this._editWorker = new EditCircle(this, overlay)
         break
-      case OverlayType.RECT:
-        this._drawWorker = new DrawRectangle(info)
+      case OverlayType.RECTANGLE:
+        this._editWorker = new EditRectangle(this, overlay)
+        break
+      case OverlayType.BILLBOARD:
+        this._editWorker = new EditBillboard(this, overlay)
+        break
+      case OverlayType.ATTACK_ARROW:
+        this._editWorker = new EditAttackArrow(this, overlay)
+        break
+      case OverlayType.DOUBLE_ARROW:
+        this._editWorker = new EditDoubleArrow(this, overlay)
+        break
+      case OverlayType.FINE_ARROW:
+        this._editWorker = new EditFineArrow(this, overlay)
+        break
+      case OverlayType.TAILED_ATTACK_ARROW:
+        this._editWorker = new EditTailedAttackArrow(this, overlay)
+        break
+      case OverlayType.GATHERING_PLACE:
+        this._editWorker = new EditGatheringPlace(this, overlay)
         break
       default:
         break

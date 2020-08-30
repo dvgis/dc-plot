@@ -4,7 +4,6 @@
  */
 
 import Draw from './Draw'
-
 import TailedAttackArrowGraphics from '../graphics/TailedAttackArrowGraphics'
 
 const { Transform } = DC
@@ -50,15 +49,15 @@ class DrawTailedAttackArrow extends Draw {
     let len = this._positions.length
     if (len === 0) {
       this._positions.push(e.surfacePosition)
-      this._createAnchor(e.surfacePosition)
+      this.createAnchor(e.surfacePosition)
       this._floatingAnchor = this._createAnchor(e.surfacePosition)
     }
     this._positions.push(e.surfacePosition)
     this._graphics.positions = this._positions
-    this._createAnchor(e.surfacePosition)
+    this.createAnchor(e.surfacePosition)
     if (len > 2) {
       this._positions.pop()
-      this._unbindEvent()
+      this.unbindEvent()
       let tailedAttackArrow = new DC.TailedAttackArrow(
         Transform.transformCartesianArrayToWGS84Array(this._positions)
       )

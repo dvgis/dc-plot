@@ -9,7 +9,7 @@ const { Transform } = DC
 
 const { Cesium } = DC.Namespace
 
-class EditPoint extends Edit {
+class EditBillboard extends Edit {
   constructor(plot, overlay) {
     super(plot)
     this._overlay = overlay
@@ -41,4 +41,4 @@ class EditPoint extends Edit {
   }
 }
 
-export default EditPoint
+export default EditBillboard

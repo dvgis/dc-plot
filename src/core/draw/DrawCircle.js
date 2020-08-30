@@ -66,16 +66,16 @@ class DrawCircle extends Draw {
     let len = this._positions.length
     if (len === 0) {
       this._positions.push(e.surfacePosition)
-      this._createAnchor(e.surfacePosition, true)
+      this.createAnchor(e.surfacePosition, true)
       this._floatingAnchor = this._createAnchor(e.surfacePosition)
     }
     this._positions.push(e.surfacePosition)
     if (len > 0) {
-      this._createAnchor(e.surfacePosition)
+      this.createAnchor(e.surfacePosition)
     }
     if (len > 1) {
       this._positions.pop()
-      this._unbindEvent()
+      this.unbindEvent()
       let circle = new DC.Circle(
         Transform.transformCartesianToWGS84(this._positions[0]),
         this._radius
