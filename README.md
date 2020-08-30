@@ -19,8 +19,10 @@ Tips：This SDK is JS+GIS framework package. Developers need to have some front-
 <script src="libs/dc-sdk/dc.base.min.js"></script>
 <!--Core Package-->
 <script src="libs/dc-sdk/dc.core.min.js"></script>
+<!--Overlay Package-->
+<script src="libs/dc-overlay/dc.overlay.min.js"></script>
 <!--Plot Package-->
-<script src="libs/dc-sdk/plot/dc.plot.min.js"></script>
+<script src="libs/dc-plot/dc.plot.min.js"></script>
 <!--Main Style Sheet -->
 <link href="libs/dc-sdk/dc.core.min.css" rel="stylesheet" type="text/css" />
 ```
@@ -28,13 +30,14 @@ Tips：This SDK is JS+GIS framework package. Developers need to have some front-
 > NPM / YARN
 
 ```shell
-   yarn add @dvgis/dc-sdk @dvgis/dc-plot
-   npm install @dvgis/dc-sdk @dvgis/dc-plot
+   yarn add @dvgis/dc-sdk @dvgis/dc-overlay @dvgis/dc-plot
+   npm install @dvgis/dc-sdk @dvgis/dc-overlay @dvgis/dc-plot
 ```
 
 ```js
 import 'dvgis/dc-sdk/dist/dc.base.min' //Basic Package
 import 'dvgis/dc-sdk/dist/dc.core.min' //Core Package
+import 'dvgis/dc-overlay/dist/dc.overlay.min' //Overlay Package
 import 'dvgis/dc-plot/dist/dc.plot.min' //Plot Package
 import 'dvgis/dc-sdk/dist/dc.core.min.css' // Main Style Sheet
 ```

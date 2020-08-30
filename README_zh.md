@@ -19,8 +19,10 @@ Tips：本框架是 JS+GIS 的框架包。开发者需要有一定的前端技�
 <script src="libs/dc-sdk/dc.base.min.js"></script>
 <!--核心包-->
 <script src="libs/dc-sdk/dc.core.min.js"></script>
+<!--要素包 -->
+<script src="libs/dc-overlay/dc.overlay.min.js"></script>
 <!--标绘包 -->
-<script src="libs/dc-sdk/plot/dc.plot.min.js"></script>
+<script src="libs/dc-plot/dc.plot.min.js"></script>
 <!--主要样式-->
 <link href="libs/dc-sdk/dc.core.min.css" rel="stylesheet" type="text/css" />
 ```
@@ -28,14 +30,15 @@ Tips：本框架是 JS+GIS 的框架包。开发者需要有一定的前端技�
 > NPM / YARN
 
 ```shell
-   yarn add @dvgis/dc-sdk @dvgis/dc-plot
-   npm install @dvgis/dc-sdk @dvgis/dc-plot
+   yarn add @dvgis/dc-sdk @dvgis/dc-overlay @dvgis/dc-plot
+   npm install @dvgis/dc-sdk @dvgis/dc-overlay @dvgis/dc-plot
 ```
 
 ```js
 import 'dvgis/dc-sdk/dist/dc.base.min' //基础包
 import 'dvgis/dc-sdk/dist/dc.core.min' //核心包
-import 'dvgis/dc-plot/dist/dc.plot.min' //核心包
+import 'dvgis/dc-overlay/dist/dc.overlay.min' //要素包
+import 'dvgis/dc-plot/dist/dc.plot.min' //标绘包
 import 'dvgis/dc-sdk/dist/dc.core.min.css' // 主要样式
 ```
 
