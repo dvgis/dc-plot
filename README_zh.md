@@ -1,8 +1,9 @@
 # DC-Plot
 
-[**🇨🇳 中文**](./) | [**🇬🇧English**](./README.md)
+[**🇨🇳 中文**](./README_zh.md) | [**🇬🇧English**](./README.md)
 
 > DC-SDK 标绘工具，如点、线、面绘制和一些军事对象绘制。
+
 > [主页](http://dc.dvgis.cn)
 
 ```warning
@@ -47,7 +48,7 @@ import 'dvgis/dc-sdk/dist/dc.core.min.css' // 主要样式
 
 const path = require('path')
 const CopywebpackPlugin = require('copy-webpack-plugin')
-const dvgis = './node_modules/@dvgis'
+const dvgisDist = './node_modules/@dvgis'
 
 module.exports = {
   // 其他配置
@@ -75,9 +76,9 @@ DC.ready(() => {
 
 ## 文档
 
-[Cesium-Api](https://cesium.com/docs/cesiumjs-ref-doc/)
+[DC Api](https://resource.dvgis.cn/dc-api)
 
-[DC-SDK-Api](http://dc.dvgis.cn/#/docs)
+[Cesium Api](https://cesium.com/docs/cesiumjs-ref-doc/)
 
 ## 示例
 

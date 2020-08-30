@@ -57,8 +57,6 @@ class Edit {
     )
   }
 
-  _prepareMarkers() {}
-
   start() {
     this._layer.clear()
     this._bindEvent()

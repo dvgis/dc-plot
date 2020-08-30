@@ -1,19 +1,18 @@
-/*
+/**
  * @Author: Caven
  * @Date: 2020-01-31 19:45:32
- * @Last Modified by: Caven
- * @Last Modified time: 2020-06-11 16:07:06
  */
 
 const { Cesium } = DC.Namespace
 
 class Draw {
-  constructor(plotInfo) {
-    this._viewer = plotInfo.viewer
-    this._plotEvent = plotInfo.plotEvent
-    this._layer = plotInfo.layer
-    this._delegate = new Cesium.Entity()
+  constructor(plot) {
+    this._plot = plot
+    this._delegate = undefined
+    this._floatingAnchor = undefined
   }
+
+  _mountEntity() {}
 
   _mouseClickHandler() {}
 
@@ -21,42 +20,55 @@ class Draw {
 
   _mouseRightClickHandler() {}
 
-  _prepareDelegate() {}
+  _createAnchor(position, isCenter = false) {
+    return this._plot.overlayLayer.add({
+      position: position,
+      billboard: {
+        image: isCenter
+          ? this._plot.options.icon_center
+          : this._plot.options.icon_anchor,
+        width: this._plot.options.icon_size[0],
+        height: this._plot.options.icon_size[1],
+        eyeOffset: new Cesium.Cartesian3(0, 0, -500),
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+      }
+    })
+  }
 
   _bindEvent() {
-    this._viewer.on(
+    this._plot.viewer.on(
       Cesium.ScreenSpaceEventType.LEFT_CLICK,
       this._mouseClickHandler,
       this
     )
 
-    this._viewer.on(
+    this._plot.viewer.on(
       Cesium.ScreenSpaceEventType.MOUSE_MOVE,
       this._mouseMoveHandler,
       this
     )
 
-    this._viewer.on(
+    this._plot.viewer.on(
       Cesium.ScreenSpaceEventType.RIGHT_CLICK,
       this._mouseRightClickHandler,
       this
     )
   }
 
-  _unbindEnvet() {
-    this._viewer.off(
+  _unbindEvent() {
+    this._plot.viewer.off(
       Cesium.ScreenSpaceEventType.LEFT_CLICK,
       this._mouseClickHandler,
       this
     )
 
-    this._viewer.off(
+    this._plot.viewer.off(
       Cesium.ScreenSpaceEventType.MOUSE_MOVE,
       this._mouseMoveHandler,
       this
     )
 
-    this._viewer.off(
+    this._plot.viewer.off(
       Cesium.ScreenSpaceEventType.RIGHT_CLICK,
       this._mouseRightClickHandler,
       this
@@ -65,7 +77,6 @@ class Draw {
 
   start() {
     this._bindEvent()
-    this._prepareDelegate()
   }
 }
 

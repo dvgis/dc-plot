@@ -1,87 +1,98 @@
-/*
+/**
  * @Author: Caven
- * @Date: 2020-01-31 19:44:41
- * @Last Modified by: Caven
- * @Last Modified time: 2020-05-12 09:34:37
+ * @Date: 2020-08-29 21:24:55
  */
 
 import Draw from './Draw'
 
-const { OverlayType, Transform } = DC
+const { Transform } = DC
 
 const { Cesium } = DC.Namespace
 
 const DEF_STYLE = {
-  width: 3,
-  material: Cesium.Color.BLUE.withAlpha(0.6)
+  material: Cesium.Color.YELLOW.withAlpha(0.6),
+  fill: true
 }
 
-class DrawClicle extends Draw {
-  constructor(plotInfo, style) {
-    super(plotInfo)
-    this._center = Cesium.Cartesian3.ZERO
+class DrawCircle extends Draw {
+  constructor(plot, style) {
+    super(plot)
+    this._positions = []
     this._radius = 0
     this._style = {
       ...DEF_STYLE,
       ...style
     }
+    this._mountEntity()
+  }
+
+  _mountEntity() {
+    this._delegate = new Cesium.Entity({
+      polygon: {
+        ...this._style,
+        hierarchy: new Cesium.CallbackProperty(() => {
+          if (this._positions.length > 1) {
+            this._radius = Cesium.Cartesian3.distance(
+              this._positions[0],
+              this._positions[1]
+            )
+            if (this._radius <= 0) {
+              return null
+            }
+            let cep = Cesium.EllipseGeometryLibrary.computeEllipsePositions(
+              {
+                center: this._positions[0],
+                semiMajorAxis: this._radius,
+                semiMinorAxis: this._radius,
+                rotation: 0,
+                granularity: 0.005
+              },
+              false,
+              true
+            )
+            let pnts = Cesium.Cartesian3.unpackArray(cep.outerPositions)
+            pnts.push(pnts[0])
+            return new Cesium.PolygonHierarchy(pnts)
+          } else {
+            return null
+          }
+        }, false)
+      }
+    })
+    this._plot.overlayLayer.add(this._delegate)
   }
 
   _mouseClickHandler(e) {
-    let position = e.target ? e.position : e.surfacePosition
-    if (position && this._center === Cesium.Cartesian3.ZERO) {
-      this._center = position
-    } else {
-      this._computeRadius(this._center, position)
-      this._unbindEnvet()
-      this._plotEvent.raiseEvent({
-        type: OverlayType.CIRCLE,
-        points: [Transform.transformCartesianToWGS84(this._center)],
-        radius: this._radius
-      })
+    let len = this._positions.length
+    if (len === 0) {
+      this._positions.push(e.surfacePosition)
+      this._createAnchor(e.surfacePosition, true)
+      this._floatingAnchor = this._createAnchor(e.surfacePosition)
+    }
+    this._positions.push(e.surfacePosition)
+    if (len > 0) {
+      this._createAnchor(e.surfacePosition)
+    }
+    if (len > 1) {
+      this._positions.pop()
+      this._unbindEvent()
+      let circle = new DC.Circle(
+        Transform.transformCartesianToWGS84(this._positions[0]),
+        this._radius
+      )
+      circle.setStyle(this._style)
+      this._plot.plotEvent.raiseEvent(circle)
     }
   }
 
   _mouseMoveHandler(e) {
-    let position = e.target ? e.position : e.surfacePosition
-    this._viewer.tooltip.showAt(e.windowPosition, '左击选择点位')
-    if (position && this._center !== Cesium.Cartesian3.ZERO) {
-      this._computeRadius(this._center, position)
+    this._plot.viewer.tooltip.showAt(e.windowPosition, '左击选择点位')
+    if (this._floatingAnchor) {
+      this._floatingAnchor.position.setValue(e.surfacePosition)
+      this._positions.pop()
+      this._positions.push(e.surfacePosition)
     }
-  }
-
-  _computeRadius(src, dest) {
-    let srcCartographic = Cesium.Cartographic.fromCartesian(src)
-    let destCartographic = Cesium.Cartographic.fromCartesian(dest)
-    let geodesic = new Cesium.EllipsoidGeodesic()
-    geodesic.setEndPoints(srcCartographic, destCartographic)
-    let s = geodesic.surfaceDistance
-    this._radius = Math.sqrt(
-      Math.pow(s, 2) +
-        Math.pow(destCartographic.height - srcCartographic.height, 2)
-    )
-  }
-
-  _prepareDelegate() {
-    this._delegate.position = new Cesium.CallbackProperty(time => {
-      return this._center
-    })
-    this._delegate.ellipse = {
-      semiMajorAxis: new Cesium.CallbackProperty(time => {
-        return this._radius
-      }),
-      semiMinorAxis: new Cesium.CallbackProperty(time => {
-        return this._radius
-      }),
-      ...this._style
-    }
-    this._delegate.point = {
-      pixelSize: 10,
-      outlineColor: Cesium.Color.RED,
-      outlineWidth: 3
-    }
-    this._layer.entities.add(this._delegate)
   }
 }
 
-export default DrawClicle
+export default DrawCircle

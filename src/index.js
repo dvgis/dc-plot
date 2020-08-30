@@ -1,11 +1,9 @@
-/*
+/**
  * @Author: Caven
- * @Date: 2020-04-03 10:13:42
- * @Last Modified by: Caven
- * @Last Modified time: 2020-05-12 14:28:35
+ * @Date: 2020-04-03 19:13:42
  */
 
-const install = function (DC) {
+const install = function(DC) {
   if (!DC || !DC.init) {
     throw new Error('Plot: Missing DC Base')
   }
@@ -15,7 +13,7 @@ const install = function (DC) {
   }
 
   DC.init(() => {
-    DC.Plot = require('./core/Plot')
+    require('./Plot.Loader')
   })
 }
 
@@ -25,5 +23,5 @@ if (typeof window !== 'undefined' && window.DC) {
 }
 
 module.exports = {
-  install,
+  install
 }

@@ -1,6 +1,6 @@
 /**
  * @Author: Caven
- * @Date: 2020-08-29 20:55:14
+ * @Date: 2020-08-29 21:30:41
  */
 
 import Draw from './Draw'
@@ -10,11 +10,10 @@ const { Transform } = DC
 const { Cesium } = DC.Namespace
 
 const DEF_STYLE = {
-  material: Cesium.Color.YELLOW.withAlpha(0.6),
-  fill: true
+  material: Cesium.Color.YELLOW.withAlpha(0.6)
 }
 
-class DrawPolygon extends Draw {
+class DrawRectangle extends Draw {
   constructor(plot, style) {
     super(plot)
     this._positions = []
@@ -27,11 +26,11 @@ class DrawPolygon extends Draw {
 
   _mountEntity() {
     this._delegate = new Cesium.Entity({
-      polygon: {
+      rectangle: {
         ...this._style,
-        hierarchy: new Cesium.CallbackProperty(() => {
-          if (this._positions.length > 2) {
-            return new Cesium.PolygonHierarchy(this._positions)
+        coordinates: new Cesium.CallbackProperty(time => {
+          if (this._positions.length > 1) {
+            return Cesium.Rectangle.fromCartesianArray(this._positions)
           } else {
             return null
           }
@@ -50,25 +49,25 @@ class DrawPolygon extends Draw {
     }
     this._positions.push(e.surfacePosition)
     this._createAnchor(e.surfacePosition)
+    if (len > 1) {
+      this._positions.pop()
+      this._unbindEvent()
+      let rectangle = new DC.Rectangle(
+        Transform.transformCartesianArrayToWGS84Array(this._positions)
+      )
+      rectangle.setStyle(this._style)
+      this._plot.plotEvent.raiseEvent(rectangle)
+    }
   }
 
   _mouseMoveHandler(e) {
-    this._plot.viewer.tooltip.showAt(e.windowPosition, '左击选择点位,右击结束')
+    this._plot.viewer.tooltip.showAt(e.windowPosition, '左击选择点位')
     if (this._floatingAnchor) {
       this._floatingAnchor.position.setValue(e.surfacePosition)
       this._positions.pop()
       this._positions.push(e.surfacePosition)
     }
   }
-
-  _mouseRightClickHandler(e) {
-    this._unbindEvent()
-    let polygon = new DC.Polygon(
-      Transform.transformCartesianArrayToWGS84Array(this._positions)
-    )
-    polygon.setStyle(this._style)
-    this._plot.plotEvent.raiseEvent(polygon)
-  }
 }
 
-export default DrawPolygon
+export default DrawRectangle

@@ -1,6 +1,6 @@
 /**
  * @Author: Caven
- * @Date: 2020-01-31 16:25:29
+ * @Date: 2020-08-29 20:29:59
  */
 
 import Draw from './Draw'
@@ -10,9 +10,6 @@ const { Transform } = DC
 const { Cesium } = DC.Namespace
 
 const DEF_STYLE = {
-  pixelSize: 10,
-  outlineColor: Cesium.Color.BLUE,
-  outlineWidth: 5,
   heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
 }
 
@@ -21,6 +18,7 @@ class DrawPoint extends Draw {
     super(plot)
     this._position = Cesium.Cartesian3.ZERO
     this._style = {
+      image: plot.options.icon_anchor,
       ...DEF_STYLE,
       ...style
     }
@@ -32,7 +30,7 @@ class DrawPoint extends Draw {
       position: new Cesium.CallbackProperty(() => {
         return this._position
       }, false),
-      point: {
+      billboard: {
         ...this._style
       }
     })
@@ -42,16 +40,17 @@ class DrawPoint extends Draw {
   _mouseClickHandler(e) {
     this._position = e.surfacePosition
     this._unbindEvent()
-    let point = new DC.Point(
-      Transform.transformCartesianToWGS84(this._position)
+    let billboard = new DC.Billboard(
+      Transform.transformCartesianToWGS84(this._position),
+      this._style.image
     )
-    point.setStyle(this._style)
-    this._plot.plotEvent.raiseEvent(point)
+    billboard.setStyle(this._style)
+    this._plot.plotEvent.raiseEvent(billboard)
   }
 
   _mouseMoveHandler(e) {
-    this._position = e.surfacePosition
     this._plot.viewer.tooltip.showAt(e.windowPosition, '单击选择点位')
+    this._position = e.surfacePosition
   }
 }
 

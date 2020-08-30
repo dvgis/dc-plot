@@ -1,9 +1,10 @@
-# DC-SDK
+# DC-Plot
 
-[**🇨🇳 中文**](./README_zh.md) | [**🇬🇧English**](./)
+[**🇨🇳 中文**](./README_zh.md) | [**🇬🇧English**](./README.md)
 
 > DC-SDK plotting tools, such as point, line, surface drawing and some military object drawing.
-> [home](http://dc.dvgis.cn)
+
+> [Home Page](http://dc.dvgis.cn)
 
 ```warning
 Tips：This SDK is JS+GIS framework package. Developers need to have some front-end technology and GIS related technology
@@ -47,7 +48,7 @@ import 'dvgis/dc-sdk/dist/dc.core.min.css' // Main Style Sheet
 
 const path = require('path')
 const CopywebpackPlugin = require('copy-webpack-plugin')
-const dvgis = './node_modules/@dvgis'
+const dvgisDist = './node_modules/@dvgis'
 
 module.exports = {
   // other settings
@@ -75,9 +76,9 @@ DC.ready(() => {
 
 ## Documentation
 
-[Cesium-Api](https://cesium.com/docs/cesiumjs-ref-doc/)
+[DC Api](https://resource.dvgis.cn/dc-api)
 
-[DC-SDK-Api](http://dc.dvgis.cn/#/docs)
+[Cesium Api](https://cesium.com/docs/cesiumjs-ref-doc/)
 
 ## Demo
 
