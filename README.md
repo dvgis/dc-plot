@@ -85,6 +85,8 @@ DC.ready(() => {
 
 ## Demo
 
+![picture](http://dc.dvgis.cn/examples/images/overlay/plot-overlay.png)
+
 ## Copyright statement
 
 ```warning

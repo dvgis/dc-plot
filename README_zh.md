@@ -85,6 +85,8 @@ DC.ready(() => {
 
 ## 示例
 
+![picture](http://dc.dvgis.cn/examples/images/overlay/plot-overlay.png)
+
 ## 版权声明
 
 ```warning
