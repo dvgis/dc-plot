@@ -50,7 +50,7 @@ class DrawTailedAttackArrow extends Draw {
     if (len === 0) {
       this._positions.push(e.surfacePosition)
       this.createAnchor(e.surfacePosition)
-      this._floatingAnchor = this._createAnchor(e.surfacePosition)
+      this._floatingAnchor = this.createAnchor(e.surfacePosition)
     }
     this._positions.push(e.surfacePosition)
     this._graphics.positions = this._positions

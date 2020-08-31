@@ -1,9 +1,8 @@
-/*
+/**
  * @Author: Caven
- * @Date: 2020-03-17 18:23:25
- * @Last Modified by: Caven
- * @Last Modified time: 2020-05-11 23:13:36
+ * @Date: 2020-08-31 10:54:38
  */
+
 import Edit from './Edit'
 
 const { Transform } = DC
@@ -22,19 +21,19 @@ class EditCircle extends Edit {
   }
 
   _mountEntity() {
-    let now = Cesium.JulianDate.now()
     this._radius = this._overlay.radius
-    let entity = new Cesium.Entity({
+    this._center = Transform.transformWGS84ToCartesian(this._overlay.center)
+    this._overlay.show = false
+    this._delegate = new Cesium.Entity({
       polygon: {
-        material: this._overlay.delegate.material
+        material: this._overlay.delegate.ellipse.material
       }
     })
-    this._center = this._overlay.delegate.position.getValue(now)
     this._positions = [].concat([
       this._center,
       this._computeCirclePoints(this._center, this._radius)[0]
     ])
-    entity.polygon.hierarchy = new Cesium.CallbackProperty(time => {
+    this._delegate.polygon.hierarchy = new Cesium.CallbackProperty(time => {
       if (this._positions.length > 1) {
         this._radius = Cesium.Cartesian3.distance(
           this._positions[0],
@@ -97,6 +96,10 @@ class EditCircle extends Edit {
   }
 
   _mouseMoveHandler(e) {
+    this._plot.viewer.tooltip.showAt(
+      e.windowPosition,
+      '点击锚点移动,右击结束编辑'
+    )
     if (!this._isMoving) {
       return
     }

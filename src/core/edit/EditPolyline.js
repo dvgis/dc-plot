@@ -22,8 +22,8 @@ class EditPolyline extends Edit {
     this._delegate = new Cesium.Entity()
     this._delegate.merge(this._overlay.delegate)
     this._overlay.show = false
-    this._delegate.polyline.positions = new Cesium.CallbackProperty(time => {
-      if (this._positions > 1) {
+    this._delegate.polyline.positions = new Cesium.CallbackProperty(() => {
+      if (this._positions.length > 1) {
         return this._positions
       } else {
         return null

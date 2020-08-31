@@ -1,8 +1,6 @@
-/*
+/**
  * @Author: Caven
- * @Date: 2020-01-18 18:22:23
- * @Last Modified by: Caven
- * @Last Modified time: 2020-06-15 09:39:18
+ * @Date: 2020-08-30 09:15:33
  */
 
 const path = require('path')
@@ -38,12 +36,6 @@ module.exports = env => {
       path: path.resolve(__dirname, 'dist'),
       publicPath: publicPath,
       sourcePrefix: ''
-    },
-    amd: {
-      toUrlUndefined: true
-    },
-    node: {
-      fs: 'empty'
     },
     module: {
       unknownContextCritical: false,

@@ -44,7 +44,6 @@ class EditPolygon extends Edit {
       this._positions.push(positions[i])
       this._positions.push(mid)
     }
-    this._positions.push(positions[positions.length - 1])
     this._positions.forEach((item, index) => {
       this.createAnchor(item, index, index % 2 !== 0)
     })
