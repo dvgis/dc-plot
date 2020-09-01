@@ -1,5 +1,11 @@
 # DC-Plot
 
+<p>
+<img src="https://img.shields.io/badge/license-Apache%202-blue"/>
+<img src="https://img.shields.io/github/package-json/v/dvgis/dc-plot?color=orange&logo=github" />
+<img src="https://img.shields.io/npm/dw/@dvgis/dc-plot?logo=npm"/>
+</p>
+
 [**🇨🇳 中文**](./README_zh.md) | [**🇬🇧English**](./README.md)
 
 > DC-SDK 标绘工具，如点、线、面绘制和一些军事对象绘制。
