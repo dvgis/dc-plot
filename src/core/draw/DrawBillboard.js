@@ -9,9 +9,7 @@ const { Transform } = DC
 
 const { Cesium } = DC.Namespace
 
-const DEF_STYLE = {
-  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
-}
+const DEF_STYLE = {}
 
 class DrawPoint extends Draw {
   constructor(plot, style) {

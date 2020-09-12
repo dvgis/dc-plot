@@ -12,8 +12,7 @@ const { Cesium } = DC.Namespace
 const DEF_STYLE = {
   pixelSize: 10,
   outlineColor: Cesium.Color.BLUE,
-  outlineWidth: 5,
-  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+  outlineWidth: 5
 }
 
 class DrawPoint extends Draw {

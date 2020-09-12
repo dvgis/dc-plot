@@ -80,7 +80,10 @@ class Edit {
         eyeOffset: new Cesium.ConstantProperty(
           new Cesium.Cartesian3(0, 0, -500)
         ),
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+        heightReference:
+          this._plot.viewer.scene.mode === Cesium.SceneMode.SCENE3D
+            ? Cesium.HeightReference.CLAMP_TO_GROUND
+            : Cesium.HeightReference.NONE
       },
       properties: {
         isMid: isMid,
