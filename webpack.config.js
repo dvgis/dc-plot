@@ -30,7 +30,7 @@ module.exports = env => {
     entry: {
       'dc.plot': ['entry']
     },
-    devtool: IS_PROD ? false : 'cheap-module-eval-source-map',
+    devtool: IS_PROD ? false : 'source-map',
     output: {
       filename: IS_PROD ? '[name].min.js' : '[name].js',
       path: path.resolve(__dirname, 'dist'),
