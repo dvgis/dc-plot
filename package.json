@@ -45,7 +45,7 @@
     "webpack-obfuscator": "^1.8.0"
   },
   "peerDependencies": {
-    "@dvgis/dc-sdk": ">=1.9.4",
-    "@dvgis/dc-overlay": ">=2.2.0"
+    "@dvgis/dc-overlay": ">=2.2.0",
+    "@dvgis/dc-sdk": ">=1.9.4"
   }
 }
