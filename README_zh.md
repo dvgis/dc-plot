@@ -41,10 +41,10 @@ Tips：本框架是 JS+GIS 的框架包。开发者需要有一定的前端技�
 ```
 
 ```js
-import 'dvgis/dc-sdk/dist/dc.base.min' //基础包
-import 'dvgis/dc-sdk/dist/dc.core.min' //核心包
-import 'dvgis/dc-overlay/dist/dc.overlay.min' //要素包
-import 'dvgis/dc-plot/dist/dc.plot.min' //标绘包
+import DC from 'dvgis/dc-sdk/dist/dc.base.min' //基础包
+import DcCore from 'dvgis/dc-sdk/dist/dc.core.min' //核心包
+import DcOverlay from 'dvgis/dc-overlay/dist/dc.overlay.min' //要素包
+import DcPlot from  'dvgis/dc-plot/dist/dc.plot.min' //标绘包
 import 'dvgis/dc-sdk/dist/dc.core.min.css' // 主要样式
 ```
 
@@ -78,6 +78,9 @@ module.exports = {
 ## 开始
 
 ```js
+DC.use(DcCore)
+DC.use(DcOverlay)
+DC.use(DcPlot)
 DC.ready(() => {
   let viewer = new DC.Viewer(divId) // divId 为一个div节点的Id属性值，如果不传入，会无法初始化3D场景
 })

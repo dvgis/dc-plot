@@ -1,6 +1,6 @@
 {
   "name": "@dvgis/dc-plot",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "DC-SDK plotting tools, such as point, line, surface drawing and some military object drawing.",
   "main": "index.js",
   "repository": "https://github.com/dvgis/dc-plot.git",
