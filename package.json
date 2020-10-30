@@ -1,6 +1,6 @@
 {
   "name": "@dvgis/dc-plot",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "DC-SDK plotting tools, such as point, line, surface drawing and some military object drawing.",
   "main": "index.js",
   "repository": "https://github.com/dvgis/dc-plot.git",
@@ -45,7 +45,7 @@
     "webpack-obfuscator": "^1.8.0"
   },
   "peerDependencies": {
-    "@dvgis/dc-overlay": ">=2.2.0",
+    "@dvgis/dc-overlay": ">=1.3.0",
     "@dvgis/dc-sdk": ">=1.9.4"
   }
 }
