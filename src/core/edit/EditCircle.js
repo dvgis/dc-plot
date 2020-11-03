@@ -26,7 +26,7 @@ class EditCircle extends Edit {
     this._overlay.show = false
     this._delegate = new Cesium.Entity({
       polygon: {
-        material: this._overlay.delegate.ellipse.material
+        material: this._overlay.delegate?.polygon?.material
       }
     })
     this._positions = [].concat([
