@@ -10,12 +10,10 @@ const { Transform } = DC
 const { Cesium } = DC.Namespace
 
 class EditPolygon extends Edit {
-  constructor(plot, overlay) {
-    super(plot)
+  constructor(overlay) {
+    super()
     this._overlay = overlay
     this._positions = []
-    this._mountEntity()
-    this._mountAnchor()
   }
 
   _mountEntity() {
@@ -24,13 +22,12 @@ class EditPolygon extends Edit {
     this._overlay.show = false
     this._delegate.polygon.hierarchy = new Cesium.CallbackProperty(time => {
       if (this._positions.length > 2) {
-        let pHierarchy = new Cesium.PolygonHierarchy(this._positions)
-        return pHierarchy
+        return new Cesium.PolygonHierarchy(this._positions)
       } else {
         return null
       }
     }, false)
-    this._plot.overlayLayer.add(this._delegate)
+    this._layer.add(this._delegate)
   }
 
   _mountAnchor() {
@@ -49,11 +46,12 @@ class EditPolygon extends Edit {
     })
   }
 
-  _mouseClickHandler(e) {
+  _onClick(e) {
     if (this._isMoving) {
       this._isMoving = false
       if (this._pickedAnchor && this._pickedAnchor.position) {
-        this._pickedAnchor.position.setValue(e.surfacePosition)
+        let position = this._clampToGround ? e.surfacePosition : e.position
+        this._pickedAnchor.position.setValue(position)
         let properties = this._pickedAnchor.properties.getValue(
           Cesium.JulianDate.now()
         )
@@ -85,10 +83,10 @@ class EditPolygon extends Edit {
             properties.index,
             1,
             preMidPosition,
-            e.surfacePosition,
+            position,
             nextMidPosition
           )
-          this._plot.anchorLayer.removeAll()
+          this._anchorLayer.removeAll()
           this._anchors = []
           this._positions.forEach((item, index) => {
             this.createAnchor(item, index, index % 2 !== 0)
@@ -104,11 +102,8 @@ class EditPolygon extends Edit {
     }
   }
 
-  _mouseMoveHandler(e) {
-    this._plot.viewer.tooltip.showAt(
-      e.windowPosition,
-      '点击锚点移动,右击结束编辑'
-    )
+  _onMouseMove(e) {
+    this._tooltip.showAt(e.windowPosition, '点击锚点移动,右击结束编辑')
     if (!this._isMoving) {
       return
     }
@@ -116,9 +111,10 @@ class EditPolygon extends Edit {
       let properties = this._pickedAnchor.properties.getValue(
         Cesium.JulianDate.now()
       )
+      let position = this._clampToGround ? e.surfacePosition : e.position
       let currentIndex = properties.index
-      this._pickedAnchor.position.setValue(e.surfacePosition)
-      this._positions[currentIndex] = e.surfacePosition
+      this._pickedAnchor.position.setValue(position)
+      this._positions[currentIndex] = position
       let len = this._positions.length
       if (!properties.isMid) {
         let preAnchorIndex = -1
@@ -157,13 +153,13 @@ class EditPolygon extends Edit {
     }
   }
 
-  _mouseRightClickHandler(e) {
+  _onRightClick(e) {
     this.unbindEvent()
     this._overlay.positions = Transform.transformCartesianArrayToWGS84Array(
       this._positions
     )
     this._overlay.show = true
-    this._plot.plotEvent.raiseEvent(this._overlay)
+    this._plotEvent.raiseEvent(this._overlay)
   }
 }
 

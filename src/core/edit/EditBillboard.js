@@ -10,11 +10,10 @@ const { Transform } = DC
 const { Cesium } = DC.Namespace
 
 class EditBillboard extends Edit {
-  constructor(plot, overlay) {
-    super(plot)
+  constructor(overlay) {
+    super()
     this._overlay = overlay
     this._position = undefined
-    this._mountEntity()
   }
 
   _mountEntity() {
@@ -25,19 +24,19 @@ class EditBillboard extends Edit {
     this._delegate.position = new Cesium.CallbackProperty(() => {
       return this._position
     })
-    this._plot.overlayLayer.add(this._delegate)
+    this._layer.add(this._delegate)
   }
 
-  _mouseMoveHandler(e) {
-    this._plot.viewer.tooltip.showAt(e.windowPosition, '右击结束编辑')
-    this._position = e.surfacePosition
+  _onMouseMove(e) {
+    this._tooltip.showAt(e.windowPosition, '右击结束编辑')
+    this._position = this._clampToGround ? e.surfacePosition : e.position
   }
 
-  _mouseRightClickHandler(e) {
+  _onRightClick(e) {
     this.unbindEvent()
     this._overlay.position = Transform.transformCartesianToWGS84(this._position)
     this._overlay.show = true
-    this._plot.plotEvent.raiseEvent(this._overlay)
+    this._plotEvent.raiseEvent(this._overlay)
   }
 }
 

@@ -16,8 +16,8 @@ const DEF_STYLE = {
 }
 
 class DrawAttackArrow extends Draw {
-  constructor(plot, style) {
-    super(plot)
+  constructor(style) {
+    super()
     this._positions = []
     this._floatingAnchor = undefined
     this._style = {
@@ -25,7 +25,6 @@ class DrawAttackArrow extends Draw {
       ...style
     }
     this._graphics = new AttackArrowGraphics()
-    this._mountEntity()
   }
 
   _mountEntity() {
@@ -42,19 +41,20 @@ class DrawAttackArrow extends Draw {
         }, false)
       }
     })
-    this._plot.overlayLayer.add(this._delegate)
+    this._layer.add(this._delegate)
   }
 
-  _mouseClickHandler(e) {
+  _onClick(e) {
     let len = this._positions.length
+    let position = this._clampToGround ? e.surfacePosition : e.position
     if (len === 0) {
-      this._positions.push(e.surfacePosition)
-      this.createAnchor(e.surfacePosition)
-      this._floatingAnchor = this.createAnchor(e.surfacePosition)
+      this._positions.push(position)
+      this.createAnchor(position)
+      this._floatingAnchor = this.createAnchor(position)
     }
-    this._positions.push(e.surfacePosition)
+    this._positions.push(position)
     this._graphics.positions = this._positions
-    this.createAnchor(e.surfacePosition)
+    this.createAnchor(position)
     if (len > 2) {
       this._positions.pop()
       this.unbindEvent()
@@ -62,16 +62,17 @@ class DrawAttackArrow extends Draw {
         Transform.transformCartesianArrayToWGS84Array(this._positions)
       )
       attackArrow.setStyle(this._style)
-      this._plot.plotEvent.raiseEvent(attackArrow)
+      this._plotEvent.raiseEvent(attackArrow)
     }
   }
 
-  _mouseMoveHandler(e) {
-    this._plot.viewer.tooltip.showAt(e.windowPosition, '单击选择点位')
+  _onMouseMove(e) {
+    this._tooltip.showAt(e.windowPosition, '单击选择点位')
     if (this._floatingAnchor) {
-      this._floatingAnchor.position.setValue(e.surfacePosition)
+      let position = this._clampToGround ? e.surfacePosition : e.position
+      this._floatingAnchor.position.setValue(position)
       this._positions.pop()
-      this._positions.push(e.surfacePosition)
+      this._positions.push(position)
     }
   }
 }

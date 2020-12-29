@@ -3,75 +3,56 @@
  * @Date: 2020-08-30 23:50:53
  */
 
+const { MouseEventType } = DC
+
 const { Cesium } = DC.Namespace
 
 class Edit {
-  constructor(plot) {
-    this._plot = plot
+  constructor() {
+    this._viewer = undefined
     this._overlay = undefined
     this._anchors = []
     this._delegate = undefined
     this._pickedAnchor = undefined
     this._isMoving = false
+    this._clampToGround = true
+    this._tooltip = undefined
+    this._layer = undefined
+    this._anchorLayer = undefined
+    this._layer = undefined
+    this._plotEvent = undefined
+    this._options = {}
   }
 
   _mountEntity() {}
 
   _mountAnchor() {}
 
-  _mouseClickHandler(e) {}
+  _onClick(e) {}
 
-  _mouseMoveHandler(e) {}
+  _onMouseMove(e) {}
 
-  _mouseRightClickHandler(e) {}
+  _onRightClick(e) {}
 
   bindEvent() {
-    this._plot.viewer.on(
-      Cesium.ScreenSpaceEventType.LEFT_CLICK,
-      this._mouseClickHandler,
-      this
-    )
-
-    this._plot.viewer.on(
-      Cesium.ScreenSpaceEventType.MOUSE_MOVE,
-      this._mouseMoveHandler,
-      this
-    )
-
-    this._plot.viewer.on(
-      Cesium.ScreenSpaceEventType.RIGHT_CLICK,
-      this._mouseRightClickHandler,
-      this
-    )
+    this._viewer.on(MouseEventType.CLICK, this._onClick, this)
+    this._viewer.on(MouseEventType.MOUSE_MOVE, this._onMouseMove, this)
+    this._viewer.on(MouseEventType.RIGHT_CLICK, this._onRightClick, this)
   }
 
   unbindEvent() {
-    this._plot.viewer.off(
-      Cesium.ScreenSpaceEventType.LEFT_CLICK,
-      this._mouseClickHandler,
-      this
-    )
-
-    this._plot.viewer.off(
-      Cesium.ScreenSpaceEventType.MOUSE_MOVE,
-      this._mouseMoveHandler,
-      this
-    )
-
-    this._plot.viewer.off(
-      Cesium.ScreenSpaceEventType.RIGHT_CLICK,
-      this._mouseRightClickHandler,
-      this
-    )
+    this._viewer.off(MouseEventType.CLICK, this._onClick, this)
+    this._viewer.off(MouseEventType.MOUSE_MOVE, this._onMouseMove, this)
+    this._viewer.off(MouseEventType.RIGHT_CLICK, this._onRightClick, this)
   }
 
   createAnchor(position, index, isMid = false, isCenter = false) {
     let image = isMid
-      ? this._plot.options.icon_midAnchor
+      ? this._options.icon_midAnchor
       : isCenter
-      ? this._plot.options.icon_center
-      : this._plot.options.icon_anchor
-    let anchor = this._plot.anchorLayer.add({
+      ? this._options.icon_center
+      : this._options.icon_anchor
+    let anchor = this._anchorLayer.add({
       position: position,
       billboard: {
         image: image,
@@ -81,7 +62,8 @@ class Edit {
           new Cesium.Cartesian3(0, 0, -500)
         ),
         heightReference:
-          this._plot.viewer.scene.mode === Cesium.SceneMode.SCENE3D
+          this._viewer.scene.mode === Cesium.SceneMode.SCENE3D &&
+          this._clampToGround
             ? Cesium.HeightReference.CLAMP_TO_GROUND
             : Cesium.HeightReference.NONE
       },
@@ -100,7 +82,16 @@ class Edit {
     return Cesium.Ellipsoid.WGS84.cartographicToCartesian(cm)
   }
 
-  start() {
+  start(plot) {
+    this._viewer = plot.viewer
+    this._tooltip = plot.viewer.tooltip
+    this._layer = plot.overlayLayer
+    this._anchorLayer = plot.anchorLayer
+    this._plotEvent = plot.plotEvent
+    this._options = plot.options
+    this._clampToGround = plot.options.clampToGround ?? true
+    this._mountEntity()
+    this._mountAnchor()
     this.bindEvent()
   }
 }

@@ -10,12 +10,10 @@ const { Transform } = DC
 const { Cesium } = DC.Namespace
 
 class EditRectangle extends Edit {
-  constructor(plot, overlay) {
-    super(plot)
+  constructor(overlay) {
+    super()
     this._overlay = overlay
     this._positions = []
-    this._mountEntity()
-    this._mountAnchor()
   }
 
   _mountEntity() {
@@ -29,7 +27,7 @@ class EditRectangle extends Edit {
         return null
       }
     }, false)
-    this._plot.overlayLayer.add(this._delegate)
+    this._layer.add(this._delegate)
   }
 
   _mountAnchor() {
@@ -41,15 +39,16 @@ class EditRectangle extends Edit {
     })
   }
 
-  _mouseClickHandler(e) {
+  _onClick(e) {
     if (this._isMoving) {
       this._isMoving = false
       if (this._pickedAnchor && this._pickedAnchor.position) {
-        this._pickedAnchor.position.setValue(e.surfacePosition)
+        let position = this._clampToGround ? e.surfacePosition : e.position
+        this._pickedAnchor.position.setValue(position)
         let properties = this._pickedAnchor.properties.getValue(
           Cesium.JulianDate.now()
         )
-        this._positions[properties.index] = e.surfacePosition
+        this._positions[properties.index] = position
       }
     } else {
       this._isMoving = true
@@ -60,11 +59,8 @@ class EditRectangle extends Edit {
     }
   }
 
-  _mouseMoveHandler(e) {
-    this._plot.viewer.tooltip.showAt(
-      e.windowPosition,
-      '点击锚点移动,右击结束编辑'
-    )
+  _onMouseMove(e) {
+    this._tooltip.showAt(e.windowPosition, '点击锚点移动,右击结束编辑')
     if (!this._isMoving) {
       return
     }
@@ -72,18 +68,19 @@ class EditRectangle extends Edit {
       let properties = this._pickedAnchor.properties.getValue(
         Cesium.JulianDate.now()
       )
-      this._pickedAnchor.position.setValue(e.surfacePosition)
-      this._positions[properties.index] = e.surfacePosition
+      let position = this._clampToGround ? e.surfacePosition : e.position
+      this._pickedAnchor.position.setValue(position)
+      this._positions[properties.index] = position
     }
   }
 
-  _mouseRightClickHandler(e) {
+  _onRightClick(e) {
     this.unbindEvent()
     this._overlay.positions = Transform.transformCartesianArrayToWGS84Array(
       this._positions
     )
     this._overlay.show = true
-    this._plot.plotEvent.raiseEvent(this._overlay)
+    this._plotEvent.raiseEvent(this._overlay)
   }
 }
 

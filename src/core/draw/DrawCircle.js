@@ -15,15 +15,14 @@ const DEF_STYLE = {
 }
 
 class DrawCircle extends Draw {
-  constructor(plot, style) {
-    super(plot)
+  constructor(style) {
+    super()
     this._positions = []
     this._radius = 0
     this._style = {
       ...DEF_STYLE,
       ...style
     }
-    this._mountEntity()
   }
 
   _mountEntity() {
@@ -59,19 +58,20 @@ class DrawCircle extends Draw {
         }, false)
       }
     })
-    this._plot.overlayLayer.add(this._delegate)
+    this._layer.add(this._delegate)
   }
 
-  _mouseClickHandler(e) {
+  _onClick(e) {
     let len = this._positions.length
+    let position = this._clampToGround ? e.surfacePosition : e.position
     if (len === 0) {
-      this._positions.push(e.surfacePosition)
-      this.createAnchor(e.surfacePosition, true)
-      this._floatingAnchor = this.createAnchor(e.surfacePosition)
+      this._positions.push(position)
+      this.createAnchor(position, true)
+      this._floatingAnchor = this.createAnchor(position)
     }
-    this._positions.push(e.surfacePosition)
+    this._positions.push(position)
     if (len > 0) {
-      this.createAnchor(e.surfacePosition)
+      this.createAnchor(position)
     }
     if (len > 1) {
       this._positions.pop()
@@ -81,16 +81,17 @@ class DrawCircle extends Draw {
         this._radius
       )
       circle.setStyle(this._style)
-      this._plot.plotEvent.raiseEvent(circle)
+      this._plotEvent.raiseEvent(circle)
     }
   }
 
-  _mouseMoveHandler(e) {
-    this._plot.viewer.tooltip.showAt(e.windowPosition, '左击选择点位')
+  _onMouseMove(e) {
+    this._tooltip.showAt(e.windowPosition, '单击选择点位')
     if (this._floatingAnchor) {
-      this._floatingAnchor.position.setValue(e.surfacePosition)
+      let position = this._clampToGround ? e.surfacePosition : e.position
+      this._floatingAnchor.position.setValue(position)
       this._positions.pop()
-      this._positions.push(e.surfacePosition)
+      this._positions.push(position)
     }
   }
 }

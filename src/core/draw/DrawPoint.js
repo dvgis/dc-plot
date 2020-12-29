@@ -16,14 +16,13 @@ const DEF_STYLE = {
 }
 
 class DrawPoint extends Draw {
-  constructor(plot, style) {
-    super(plot)
+  constructor(style) {
+    super()
     this._position = Cesium.Cartesian3.ZERO
     this._style = {
       ...DEF_STYLE,
       ...style
     }
-    this._mountEntity()
   }
 
   _mountEntity() {
@@ -35,22 +34,22 @@ class DrawPoint extends Draw {
         ...this._style
       }
     })
-    this._plot.overlayLayer.add(this._delegate)
+    this._layer.add(this._delegate)
   }
 
-  _mouseClickHandler(e) {
-    this._position = e.surfacePosition
+  _onClick(e) {
+    this._position = this._clampToGround ? e.surfacePosition : e.position
     this.unbindEvent()
     let point = new DC.Point(
       Transform.transformCartesianToWGS84(this._position)
     )
     point.setStyle(this._style)
-    this._plot.plotEvent.raiseEvent(point)
+    this._plotEvent.raiseEvent(point)
   }
 
-  _mouseMoveHandler(e) {
-    this._position = e.surfacePosition
-    this._plot.viewer.tooltip.showAt(e.windowPosition, '单击选择点位')
+  _onMouseMove(e) {
+    this._tooltip.showAt(e.windowPosition, '单击选择点位')
+    this._position = this._clampToGround ? e.surfacePosition : e.position
   }
 }
 

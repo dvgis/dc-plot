@@ -11,16 +11,17 @@ const { Cesium } = DC.Namespace
 
 const DEF_STYLE = {}
 
+const IMG_CIRCLE_RED = require('../images/circle_red.png')
+
 class DrawPoint extends Draw {
-  constructor(plot, style) {
-    super(plot)
+  constructor(style) {
+    super()
     this._position = Cesium.Cartesian3.ZERO
     this._style = {
-      image: plot.options.icon_anchor,
+      image: IMG_CIRCLE_RED,
       ...DEF_STYLE,
       ...style
     }
-    this._mountEntity()
   }
 
   _mountEntity() {
@@ -32,23 +33,23 @@ class DrawPoint extends Draw {
         ...this._style
       }
     })
-    this._plot.overlayLayer.add(this._delegate)
+    this._layer.add(this._delegate)
   }
 
-  _mouseClickHandler(e) {
-    this._position = e.surfacePosition
+  _onClick(e) {
+    this._position = this._clampToGround ? e.surfacePosition : e.position
     this.unbindEvent()
     let billboard = new DC.Billboard(
       Transform.transformCartesianToWGS84(this._position),
       this._style.image
     )
     billboard.setStyle(this._style)
-    this._plot.plotEvent.raiseEvent(billboard)
+    this._plotEvent.raiseEvent(billboard)
   }
 
-  _mouseMoveHandler(e) {
-    this._plot.viewer.tooltip.showAt(e.windowPosition, '单击选择点位')
-    this._position = e.surfacePosition
+  _onMouseMove(e) {
+    this._tooltip.showAt(e.windowPosition, '单击选择点位')
+    this._position = this._clampToGround ? e.surfacePosition : e.position
   }
 }
 

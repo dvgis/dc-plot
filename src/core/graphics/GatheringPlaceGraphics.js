@@ -39,7 +39,7 @@ class GatheringPlaceGraphics {
       let pnt = PlotUtil.getThirdPoint(pnts[0], mid, HALF_PI, d, true)
       pnts = [pnts[0], pnt, pnts[1]]
     }
-    let mid = DC.PlotUtil.mid(pnts[0], pnts[2])
+    let mid = PlotUtil.mid(pnts[0], pnts[2])
     pnts.push(mid, pnts[0], pnts[1])
     let normals = []
     for (let i = 0; i < pnts.length - 2; i++) {

@@ -14,14 +14,13 @@ const DEF_STYLE = {
 }
 
 class DrawRectangle extends Draw {
-  constructor(plot, style) {
-    super(plot)
+  constructor(style) {
+    super()
     this._positions = []
     this._style = {
       ...DEF_STYLE,
       ...style
     }
-    this._mountEntity()
   }
 
   _mountEntity() {
@@ -37,18 +36,19 @@ class DrawRectangle extends Draw {
         }, false)
       }
     })
-    this._plot.overlayLayer.add(this._delegate)
+    this._layer.add(this._delegate)
   }
 
-  _mouseClickHandler(e) {
+  _onClick(e) {
+    let position = this._clampToGround ? e.surfacePosition : e.position
     let len = this._positions.length
     if (len === 0) {
-      this._positions.push(e.surfacePosition)
-      this.createAnchor(e.surfacePosition)
-      this._floatingAnchor = this.createAnchor(e.surfacePosition)
+      this._positions.push(position)
+      this.createAnchor(position)
+      this._floatingAnchor = this.createAnchor(position)
     }
-    this._positions.push(e.surfacePosition)
-    this.createAnchor(e.surfacePosition)
+    this._positions.push(position)
+    this.createAnchor(position)
     if (len > 1) {
       this._positions.pop()
       this.unbindEvent()
@@ -56,16 +56,17 @@ class DrawRectangle extends Draw {
         Transform.transformCartesianArrayToWGS84Array(this._positions)
       )
       rectangle.setStyle(this._style)
-      this._plot.plotEvent.raiseEvent(rectangle)
+      this._plotEvent.raiseEvent(rectangle)
     }
   }
 
-  _mouseMoveHandler(e) {
-    this._plot.viewer.tooltip.showAt(e.windowPosition, '左击选择点位')
+  _onMouseMove(e) {
+    this._tooltip.showAt(e.windowPosition, '左击选择点位')
     if (this._floatingAnchor) {
-      this._floatingAnchor.position.setValue(e.surfacePosition)
+      let position = this._clampToGround ? e.surfacePosition : e.position
+      this._floatingAnchor.position.setValue(position)
       this._positions.pop()
-      this._positions.push(e.surfacePosition)
+      this._positions.push(position)
     }
   }
 }

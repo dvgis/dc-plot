@@ -40,7 +40,8 @@ const DEF_OPTS = {
   icon_center: IMG_CIRCLE_YELLOW,
   icon_anchor: IMG_CIRCLE_RED,
   icon_midAnchor: IMG_CIRCLE_BLUE,
-  icon_size: [12, 12]
+  icon_size: [12, 12],
+  clampToGround: true
 }
 
 class Plot {
@@ -56,7 +57,7 @@ class Plot {
     this._editWorker = undefined
     this._overlayLayer = new Cesium.CustomDataSource('plot-overlay-layer')
     this._viewer.dataSources.add(this._overlayLayer)
-    this._anchorLayer = new Cesium.CustomDataSource('plot-anchor-layer')
+    this._anchorLayer = new Cesium.CustomDataSource('plot-overlay-layer')
     this._viewer.dataSources.add(this._anchorLayer)
     this._state = undefined
   }
@@ -81,6 +82,10 @@ class Plot {
     return this._anchorLayer.entities
   }
 
+  get state() {
+    return this._state
+  }
+
   _completeCallback(overlay) {
     this._drawWorker = undefined
     this._editWorker = undefined
@@ -99,37 +104,37 @@ class Plot {
   _createDrawWorker(type, style) {
     switch (type) {
       case OverlayType.POINT:
-        this._drawWorker = new DrawPoint(this, style)
+        this._drawWorker = new DrawPoint(style)
         break
       case OverlayType.POLYLINE:
-        this._drawWorker = new DrawPolyline(this, style)
+        this._drawWorker = new DrawPolyline(style)
         break
       case OverlayType.POLYGON:
-        this._drawWorker = new DrawPolygon(this, style)
+        this._drawWorker = new DrawPolygon(style)
         break
       case OverlayType.CIRCLE:
-        this._drawWorker = new DrawCircle(this, style)
+        this._drawWorker = new DrawCircle(style)
         break
       case OverlayType.RECTANGLE:
-        this._drawWorker = new DrawRectangle(this, style)
+        this._drawWorker = new DrawRectangle(style)
         break
       case OverlayType.BILLBOARD:
-        this._drawWorker = new DrawBillboard(this, style)
+        this._drawWorker = new DrawBillboard(style)
         break
       case OverlayType.ATTACK_ARROW:
-        this._drawWorker = new DrawAttackArrow(this, style)
+        this._drawWorker = new DrawAttackArrow(style)
         break
       case OverlayType.DOUBLE_ARROW:
-        this._drawWorker = new DrawDoubleArrow(this, style)
+        this._drawWorker = new DrawDoubleArrow(style)
         break
       case OverlayType.FINE_ARROW:
-        this._drawWorker = new DrawFineArrow(this, style)
+        this._drawWorker = new DrawFineArrow(style)
         break
       case OverlayType.TAILED_ATTACK_ARROW:
-        this._drawWorker = new DrawTailedAttackArrow(this, style)
+        this._drawWorker = new DrawTailedAttackArrow(style)
         break
       case OverlayType.GATHERING_PLACE:
-        this._drawWorker = new DrawGatheringPlace(this, style)
+        this._drawWorker = new DrawGatheringPlace(style)
         break
       default:
         break
@@ -139,37 +144,37 @@ class Plot {
   _createEditWorker(overlay) {
     switch (overlay.type) {
       case OverlayType.POINT:
-        this._editWorker = new EditPoint(this, overlay)
+        this._editWorker = new EditPoint(overlay)
         break
       case OverlayType.POLYLINE:
-        this._editWorker = new EditPolyline(this, overlay)
+        this._editWorker = new EditPolyline(overlay)
         break
       case OverlayType.POLYGON:
-        this._editWorker = new EditPolygon(this, overlay)
+        this._editWorker = new EditPolygon(overlay)
         break
       case OverlayType.CIRCLE:
-        this._editWorker = new EditCircle(this, overlay)
+        this._editWorker = new EditCircle(overlay)
         break
       case OverlayType.RECTANGLE:
-        this._editWorker = new EditRectangle(this, overlay)
+        this._editWorker = new EditRectangle(overlay)
         break
       case OverlayType.BILLBOARD:
-        this._editWorker = new EditBillboard(this, overlay)
+        this._editWorker = new EditBillboard(overlay)
         break
       case OverlayType.ATTACK_ARROW:
-        this._editWorker = new EditAttackArrow(this, overlay)
+        this._editWorker = new EditAttackArrow(overlay)
         break
       case OverlayType.DOUBLE_ARROW:
-        this._editWorker = new EditDoubleArrow(this, overlay)
+        this._editWorker = new EditDoubleArrow(overlay)
         break
       case OverlayType.FINE_ARROW:
-        this._editWorker = new EditFineArrow(this, overlay)
+        this._editWorker = new EditFineArrow(overlay)
         break
       case OverlayType.TAILED_ATTACK_ARROW:
-        this._editWorker = new EditTailedAttackArrow(this, overlay)
+        this._editWorker = new EditTailedAttackArrow(overlay)
         break
       case OverlayType.GATHERING_PLACE:
-        this._editWorker = new EditGatheringPlace(this, overlay)
+        this._editWorker = new EditGatheringPlace(overlay)
         break
       default:
         break
@@ -178,18 +183,26 @@ class Plot {
 
   draw(type, callback, style) {
     this._state = 'draw'
+    if (this._drawWorker) {
+      this._drawWorker.unbindEvent()
+      this._drawWorker = undefined
+    }
     this._viewer.tooltip.enable = true
     this._bindEvent(callback)
     this._createDrawWorker(type, style)
-    this._drawWorker && this._drawWorker.start()
+    this._drawWorker && this._drawWorker.start(this)
   }
 
   edit(overlay, callback) {
     this._state = 'edit'
+    if (this._editWorker) {
+      this._editWorker.unbindEvent()
+      this._editWorker = undefined
+    }
     this._viewer.tooltip.enable = true
     this._bindEvent(callback)
     this._createEditWorker(overlay)
-    this._editWorker && this._editWorker.start()
+    this._editWorker && this._editWorker.start(this)
   }
 
   destroy() {

@@ -10,12 +10,10 @@ const { Transform } = DC
 const { Cesium } = DC.Namespace
 
 class EditPolyline extends Edit {
-  constructor(plot, overlay) {
-    super(plot)
+  constructor(overlay) {
+    super()
     this._overlay = overlay
     this._positions = []
-    this._mountEntity()
-    this._mountAnchor()
   }
 
   _mountEntity() {
@@ -29,7 +27,7 @@ class EditPolyline extends Edit {
         return null
       }
     }, false)
-    this._plot.overlayLayer.add(this._delegate)
+    this._layer.add(this._delegate)
   }
 
   _mountAnchor() {
@@ -49,11 +47,12 @@ class EditPolyline extends Edit {
     })
   }
 
-  _mouseClickHandler(e) {
+  _onClick(e) {
     if (this._isMoving) {
       this._isMoving = false
       if (this._pickedAnchor && this._pickedAnchor.position) {
-        this._pickedAnchor.position.setValue(e.surfacePosition)
+        let position = this._clampToGround ? e.surfacePosition : e.position
+        this._pickedAnchor.position.setValue(position)
         let properties = this._pickedAnchor.properties.getValue(
           Cesium.JulianDate.now()
         )
@@ -66,13 +65,13 @@ class EditPolyline extends Edit {
             this._positions[properties.index],
             this._positions[properties.index + 1]
           )
-          this._plot.anchorLayer.removeAll()
+          this._anchorLayer.removeAll()
           this._anchors = []
           this._positions.splice(
             properties.index,
             1,
             preMidPosition,
-            e.surfacePosition,
+            position,
             nextMidPosition
           )
           this._positions.forEach((item, index) => {
@@ -89,11 +88,8 @@ class EditPolyline extends Edit {
     }
   }
 
-  _mouseMoveHandler(e) {
-    this._plot.viewer.tooltip.showAt(
-      e.windowPosition,
-      '点击锚点移动,右击结束编辑'
-    )
+  _onMouseMove(e) {
+    this._tooltip.showAt(e.windowPosition, '点击锚点移动,右击结束编辑')
     if (!this._isMoving) {
       return
     }
@@ -101,8 +97,10 @@ class EditPolyline extends Edit {
       let properties = this._pickedAnchor.properties.getValue(
         Cesium.JulianDate.now()
       )
-      this._pickedAnchor.position.setValue(e.surfacePosition)
-      this._positions[properties.index] = e.surfacePosition
+      let position = this._clampToGround ? e.surfacePosition : e.position
+
+      this._pickedAnchor.position.setValue(position)
+      this._positions[properties.index] = position
       if (!properties.isMid) {
         let currentIndex = properties.index
         let preAnchorIndex = -1
@@ -144,13 +142,13 @@ class EditPolyline extends Edit {
     }
   }
 
-  _mouseRightClickHandler(e) {
+  _onRightClick(e) {
     this.unbindEvent()
     this._overlay.positions = Transform.transformCartesianArrayToWGS84Array(
       this._positions
     )
     this._overlay.show = true
-    this._plot.plotEvent.raiseEvent(this._overlay)
+    this._plotEvent.raiseEvent(this._overlay)
   }
 }
 

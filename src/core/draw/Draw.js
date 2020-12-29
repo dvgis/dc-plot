@@ -3,82 +3,66 @@
  * @Date: 2020-01-31 19:45:32
  */
 
+const { MouseEventType } = DC
 const { Cesium } = DC.Namespace
 
 class Draw {
-  constructor(plot) {
-    this._plot = plot
+  constructor() {
+    this._viewer = undefined
     this._delegate = undefined
     this._floatingAnchor = undefined
+    this._clampToGround = true
+    this._tooltip = undefined
+    this._layer = undefined
+    this._plotEvent = undefined
+    this._options = {}
   }
 
   _mountEntity() {}
 
-  _mouseClickHandler() {}
+  _onClick(e) {}
 
-  _mouseMoveHandler() {}
+  _onMouseMove(e) {}
 
-  _mouseRightClickHandler() {}
+  _onRightClick(e) {}
 
   bindEvent() {
-    this._plot.viewer.on(
-      Cesium.ScreenSpaceEventType.LEFT_CLICK,
-      this._mouseClickHandler,
-      this
-    )
-
-    this._plot.viewer.on(
-      Cesium.ScreenSpaceEventType.MOUSE_MOVE,
-      this._mouseMoveHandler,
-      this
-    )
-
-    this._plot.viewer.on(
-      Cesium.ScreenSpaceEventType.RIGHT_CLICK,
-      this._mouseRightClickHandler,
-      this
-    )
+    this._viewer.on(MouseEventType.CLICK, this._onClick, this)
+    this._viewer.on(MouseEventType.MOUSE_MOVE, this._onMouseMove, this)
+    this._viewer.on(MouseEventType.RIGHT_CLICK, this._onRightClick, this)
   }
 
   unbindEvent() {
-    this._plot.viewer.off(
-      Cesium.ScreenSpaceEventType.LEFT_CLICK,
-      this._mouseClickHandler,
-      this
-    )
-
-    this._plot.viewer.off(
-      Cesium.ScreenSpaceEventType.MOUSE_MOVE,
-      this._mouseMoveHandler,
-      this
-    )
-
-    this._plot.viewer.off(
-      Cesium.ScreenSpaceEventType.RIGHT_CLICK,
-      this._mouseRightClickHandler,
-      this
-    )
+    this._viewer.off(MouseEventType.CLICK, this._onClick, this)
+    this._viewer.off(MouseEventType.MOUSE_MOVE, this._onMouseMove, this)
+    this._viewer.off(MouseEventType.RIGHT_CLICK, this._onRightClick, this)
   }
 
   createAnchor(position, isCenter = false) {
-    return this._plot.overlayLayer.add({
+    return this._layer.add({
       position: position,
       billboard: {
-        image: isCenter
-          ? this._plot.options.icon_center
-          : this._plot.options.icon_anchor,
-        width: this._plot.options.icon_size[0],
-        height: this._plot.options.icon_size[1],
+        image: isCenter ? this._options.icon_center : this._options.icon_anchor,
+        width: this._options.icon_size[0],
+        height: this._options.icon_size[1],
         eyeOffset: new Cesium.Cartesian3(0, 0, -500),
         heightReference:
-          this._plot.viewer.scene.mode === Cesium.SceneMode.SCENE3D
+          this._viewer.scene.mode === Cesium.SceneMode.SCENE3D &&
+          this._clampToGround
             ? Cesium.HeightReference.CLAMP_TO_GROUND
             : Cesium.HeightReference.NONE
       }
     })
   }
 
-  start() {
+  start(plot) {
+    this._viewer = plot.viewer
+    this._tooltip = plot.viewer.tooltip
+    this._layer = plot.overlayLayer
+    this._plotEvent = plot.plotEvent
+    this._options = plot.options
+    this._clampToGround = plot.options.clampToGround ?? true
+    this._mountEntity()
     this.bindEvent()
   }
 }
